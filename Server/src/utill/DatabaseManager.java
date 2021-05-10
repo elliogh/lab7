@@ -43,7 +43,7 @@ public class DatabaseManager {
 
         ResultSet rs = statement.executeQuery("SELECT * FROM product INNER JOIN person USING (passportId) INNER JOIN coordinates USING (id);");
         for (int i = 0; rs.next(); i++) {
-            System.out.println(rs.getString("y"));
+            System.out.println(rs.getString("price"));
         }
         return connection;
     }
