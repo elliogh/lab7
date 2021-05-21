@@ -31,6 +31,12 @@ public class Controller {
         Container container;
         String feedBack;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        while(!isAuthorization()){
+            continue;
+        }
+
+
         while (true){
             container = receiveCommand();
             //execute
@@ -50,6 +56,35 @@ public class Controller {
                 System.exit(0);
             }
         }
+    }
+
+    //Авторизация
+    public boolean isAuthorization() {
+
+        try {
+            Container container = receive(channel, connector.socketAddress);
+            ServerUser serverUser = (ServerUser) container.getObject();
+            boolean isUser = commandReceiver.getDatabaseManager().checkUser(serverUser);
+
+            if (serverUser.getAuthorized()){
+                if (isUser) {
+                    send(channel, new Container(true, container.getAddress()));
+                } else {
+                    send(channel, new Container(false, container.getAddress()));
+                }
+            } else {
+                //Если юзера не существует, то его создаем
+                if (!isUser){
+                    commandReceiver.getDatabaseManager().registerUser(serverUser);
+                }
+                return false;
+            }
+
+            return isUser;
+        } catch (NullPointerException e) {
+            return false;
+        }
+
     }
 
     //Получаем команду с аргументами от клиента

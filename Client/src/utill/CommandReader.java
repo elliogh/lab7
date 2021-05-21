@@ -4,6 +4,7 @@ import collection.Coordinates;
 import collection.Person;
 import collection.Product;
 import collection.UnitOfMeasure;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import commands.*;
 import java.io.*;
 import java.net.*;
@@ -259,16 +260,10 @@ public class CommandReader {
                     if (scanner.hasNextLine()) {
                         line = scanner.nextLine().trim();
                     }
-
-                    break;
-                } catch (NoSuchElementException e) {
-                    System.out.println("Ошибка ввода");
-                }
-
-                try{
                     coordinates.setX(Double.parseDouble(line));
-                }catch(NumberFormatException e){
-                    System.out.println("EROR");
+                    break;
+                } catch (Exception e) {
+                    System.out.println("Ошибка ввода");
                 }
             }
 
@@ -489,6 +484,58 @@ public class CommandReader {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream out = new ObjectOutputStream(bos);
             out.writeObject(command);
+            out.flush();
+            sending = bos.toByteArray();
+            DatagramPacket packet = new DatagramPacket(sending, sending.length, address);
+            socket.send(packet);
+        } catch (PortUnreachableException e) {
+            System.out.println("Порт недоступен");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //TODO Проверить корректность работы
+    public boolean checkServerUser(ServerUser serverUser, DatagramSocket socket, SocketAddress address){
+        byte[] sending;
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(serverUser);
+            out.flush();
+            sending = bos.toByteArray();
+            DatagramPacket packet = new DatagramPacket(sending, sending.length, address);
+            socket.send(packet);
+        } catch (PortUnreachableException e) {
+            System.out.println("Порт недоступен");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Получили реакцию сервера
+        byte[] message = new byte[16384]; //Массив байт, который мы получаем
+        try {
+            DatagramPacket packet = new DatagramPacket(message, message.length);
+            socket.setSoTimeout(10000); //Задержка для возможности обработки запроса клиента
+            socket.receive(packet);
+            ByteArrayInputStream bis = new ByteArrayInputStream(message);
+            ObjectInput in = new ObjectInputStream(bis);
+            return (Boolean) in.readObject();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Время ожидания превышено");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void registerServerUser(ServerUser serverUser, DatagramSocket socket, SocketAddress address){
+        byte[] sending;
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(serverUser);
             out.flush();
             sending = bos.toByteArray();
             DatagramPacket packet = new DatagramPacket(sending, sending.length, address);

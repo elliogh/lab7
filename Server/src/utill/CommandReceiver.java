@@ -4,21 +4,26 @@ import collection.Person;
 import collection.Product;
 import commands.*;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommandReceiver {
-    private final TreeMap<Integer, Product> collection;
+    private  TreeMap<Integer, Product> collection;
     private final LocalDate initDate;
     private final HashSet<Command> commandSet = new HashSet<>();
-    private String path;
+    private DatabaseManager databaseManager;
 
     public CommandReceiver() {
+        collection = new TreeMap<>();
         initDate = LocalDate.now();
-        path = "./src/input_file.json";
-        if (System.getenv("tselikov") != null) path = System.getenv("tselikov");
-        collection = new JsonParser().jsonFileToCollection(path);
+        databaseManager = new DatabaseManager();
+        try {
+            databaseManager.connect(collection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         addCommands(
                 new HelpCommand(),
                 new InfoCommand(),
@@ -167,7 +172,7 @@ public class CommandReceiver {
     }
 
     public String save() {
-        new JsonParser().writeToJson(path, collection);
+        databaseManager.saveCollection(collection);
         return Clr.ANSI_GREEN + "Коллекция сохранена" + Clr.ANSI_RESET;
     }
 
@@ -199,5 +204,9 @@ public class CommandReceiver {
         for (Command command : commands) {
             commandSet.add(command);
         }
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 }

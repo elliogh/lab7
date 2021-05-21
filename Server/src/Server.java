@@ -1,20 +1,10 @@
 import utill.Controller;
-import utill.DatabaseManager;
-
-import java.sql.SQLException;
 import java.util.*;
 
 public class Server{
 
     public static void main(String[] args) {
         System.out.println("Начало работы сервера:");
-
-        DatabaseManager databaseManager = new DatabaseManager();
-        try {
-            databaseManager.connect();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
 
         int port = askPort();
         Controller controller = new Controller(port);
