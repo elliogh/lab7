@@ -4,7 +4,6 @@ import collection.Product;
 import utill.CommandReceiver;
 
 import java.io.Serializable;
-import java.util.TreeMap;
 
 /**
  * Класс команды update
@@ -15,15 +14,17 @@ public class UpdateCommand implements Command, Serializable {
     private final int id;
     private final Product product;
     private static final long serialVersionUID = 6529685098267757690L;
+    private String login;
 
-    public UpdateCommand(int id, Product product) {
+    public UpdateCommand(int id, Product product, String login) {
         this.id = id;
         this.product = product;
+        this.login = login;
     }
 
     @Override
     public String execute(CommandReceiver commandReceiver) {
-        return commandReceiver.update(id, product);
+        return commandReceiver.update(id, product, login);
     }
 
     @Override
@@ -35,4 +36,6 @@ public class UpdateCommand implements Command, Serializable {
     public String getHelpText() {
         return helpText;
     }
+
+
 }

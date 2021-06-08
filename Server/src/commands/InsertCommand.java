@@ -4,7 +4,6 @@ import collection.Product;
 import utill.CommandReceiver;
 
 import java.io.Serializable;
-import java.util.TreeMap;
 
 /**
  * Класс команды insert
@@ -35,4 +34,6 @@ public class InsertCommand implements Command, Serializable {
     public String getHelpText() {
         return helpText;
     }
+
+
 }

@@ -11,9 +11,12 @@ public class RemoveKeyCommand implements Command, Serializable {
     private final String key = "remove_key";
     private final String helpText = "удалить элемент из коллекции по его ключу";
     private final int id;
+    private final String login;
+    private static final long serialVersionUID = 6529685098267757690L;
 
-    public RemoveKeyCommand(int id) {
+    public RemoveKeyCommand(int id, String login) {
         this.id = id;
+        this.login = login;
     }
 
     @Override

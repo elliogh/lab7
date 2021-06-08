@@ -2,16 +2,16 @@ package utill;
 
 import collection.Product;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 
 public class DatabaseManager {
-    private final String url = "jdbc:postgresql://localhost:5432/postgres";
-    private final String user = "dany";
+    private final String url = "jdbc:postgresql://pg/studs";
+    private final String user = "s311709";
     private final String password = "ogc316";
     private Connection connection;
 
@@ -37,8 +37,8 @@ public class DatabaseManager {
             statement = connection.createStatement();
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver не найден");
-        } catch (SQLException e) {
-            System.out.println("SQL exeption");
+        } catch (NullPointerException e) {
+            System.out.println("SQL exception");
         }
 
         ResultSet rs = statement.executeQuery("SELECT * FROM person INNER JOIN product USING (passportid) ;");
@@ -64,7 +64,7 @@ public class DatabaseManager {
                         + e.getValue().getOwner().getWeight() + ");"
                 );
 
-                statement.executeUpdate("INSERT INTO product (name, x, y, creationdate, price, partNumber, manufactureCost, unitOfMeasure, passportId) VALUES ("
+                statement.executeUpdate("INSERT INTO product (name, x, y, creationdate, price, partNumber, manufactureCost, unitOfMeasure, passportId, creator) VALUES ("
                         + "\'" + e.getValue().getName() + "\',"
                         + e.getValue().getCoordinates().getX() +","
                         + e.getValue().getCoordinates().getY() + ","
@@ -73,7 +73,8 @@ public class DatabaseManager {
                         + "\'" + e.getValue().getPartNumber() + "\',"
                         + e.getValue().getManufactureCost() + ","
                         + "\'" + e.getValue().getUnitOfMeasure() + "\',"
-                        + "\'" + e.getValue().getOwner().getPassportID() + "\');"
+                        + "\'" + e.getValue().getOwner().getPassportID() + "\',"
+                        + "\'" + e.getValue().getCreator()  + "\');"
                 );
 
             }
@@ -87,12 +88,12 @@ public class DatabaseManager {
         try {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT * FROM users");
-            for (String login, password;result.next();){
-                login = result.getString("login");
-                password = result.getString("password");
+            for (;result.next();){
+                String login = result.getString("login");
+                String password = result.getString("password");
 
                 if (serverUser.getLogin().equals(login)){
-                    if (serverUser.getPassword().equals(password)){
+                    if (hash(serverUser.getPassword()).equals(password)){
                         return true;
                     }
                 }
@@ -109,9 +110,22 @@ public class DatabaseManager {
         try{
             Statement statement = connection.createStatement();
             statement.executeUpdate("INSERT INTO users(login, password) VALUES( \'" + serverUser.getLogin() + "\'," +
-                                                                                                    "\'" + serverUser.getPassword() + "\');");
+                                                                                                    "\'" + hash(serverUser.getPassword()) + "\');");
         } catch (SQLException e){
             e.printStackTrace();
         }
+    }
+
+    //TODO Переписать на SHA-256
+    public String hash(String str){
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] hash = digest.digest(str.getBytes(StandardCharsets.UTF_8));
+        String encoded = Base64.getEncoder().encodeToString(hash);
+        return encoded;
     }
 }

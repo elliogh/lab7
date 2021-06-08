@@ -3,14 +3,13 @@ package utill;
 import collection.Person;
 import collection.Product;
 import commands.*;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommandReceiver {
-    private  TreeMap<Integer, Product> collection;
+    private TreeMap<Integer, Product> collection;
     private final LocalDate initDate;
     private final HashSet<Command> commandSet = new HashSet<>();
     private DatabaseManager databaseManager;
@@ -29,7 +28,7 @@ public class CommandReceiver {
                 new InfoCommand(),
                 new ShowCommand(),
                 new InsertCommand(0, null),
-                new RemoveKeyCommand(0),
+                new RemoveKeyCommand(0,null),
                 new ClearCommand(),
                 new ExecuteScriptCommand(null),
                 new ExitCommand(),
@@ -78,35 +77,39 @@ public class CommandReceiver {
         return Clr.ANSI_GREEN + "Элемент добавлен в коллекцию" + Clr.ANSI_RESET;
     }
 
-    public String update(int id, Product product) {
+    public String update(int id, Product product, String login) {
         if (collection.containsKey(id)) {
-            collection.replace(id, product);
+            if (collection.get(id).getCreator().equals(login)) {
+                collection.replace(id, product);
+            } else return "Вы не можете изменять данный объект";
             return Clr.ANSI_GREEN + "Элемент обновлен" + Clr.ANSI_RESET;
         } else return Clr.ANSI_RED + "Элемента с таким ключом не существует" + Clr.ANSI_RESET;
     }
 
-    public String removeKey(int id) {
+    public synchronized String removeKey(int id, String login) {
         if (collection.containsKey(id)) {
-            collection.remove(id);
+            if (collection.get(id).getCreator().equals(login)) {
+                collection.remove(id);
+            } else return "Вы не можете удалить данный объект";
             return Clr.ANSI_GREEN + "Команда успешно выполнена" + Clr.ANSI_RESET;
         }
         else return Clr.ANSI_RED + "Элемента с таким ключом не существует" + Clr.ANSI_RESET;
     }
 
-    public String clear() {
+    public synchronized String clear() {
         collection.clear();
         return Clr.ANSI_GREEN + "Коллекция очищена" + Clr.ANSI_RESET;
     }
 
-    public String executeScript(ArrayList<String> list) {
+    public synchronized String executeScript(ArrayList<String> list) {
         return null;
     }
 
-    public String exit() {
+    public synchronized String exit() {
         return null;
     }
 
-    public String removeLower(Product product) {
+    public synchronized String removeLower(Product product) {
         HashSet<Integer> keys = new HashSet<>();
         for (Map.Entry<Integer, Product> e : collection.entrySet()) {
             if (e.getValue().hashCode() - product.hashCode() < 0) keys.add(e.getKey());
@@ -117,7 +120,7 @@ public class CommandReceiver {
         return Clr.ANSI_GREEN + "Команда успешно выполнена" + Clr.ANSI_RESET;
     }
 
-    public String replaceIfGreater(int id, Product product) {
+    public synchronized String replaceIfGreater(int id, Product product) {
         if (collection.containsKey(id)) {
             if (collection.get(id).hashCode() - product.hashCode() < 0) {
                 collection.replace(id, product);
@@ -127,7 +130,7 @@ public class CommandReceiver {
         else return Clr.ANSI_RED + "Элемента с таким ключом не существует" + Clr.ANSI_RESET;
     }
 
-    public String removeLowerKey(int id) {
+    public synchronized String removeLowerKey(int id) {
         HashSet<Integer> keys = new HashSet<>();
         for (Map.Entry<Integer, Product> e : collection.entrySet()) {
             if (e.getKey() < id) keys.add(e.getKey());
@@ -139,7 +142,7 @@ public class CommandReceiver {
         return Clr.ANSI_GREEN + "Команда успешно выполнена" + Clr.ANSI_RESET;
     }
 
-    public String removeAllByOwner(Person owner) {
+    public synchronized String removeAllByOwner(Person owner) {
         HashSet<Integer> keys = new HashSet<>();
         for (Map.Entry<Integer, Product> e : collection.entrySet()) {
             if (owner.equals(e.getValue().getOwner())) {
@@ -153,7 +156,7 @@ public class CommandReceiver {
         return Clr.ANSI_GREEN + "Команда успешно выполнена" + Clr.ANSI_RESET;
     }
 
-    public String printAscending() {
+    public synchronized String printAscending() {
         if (!collection.isEmpty()) return collection.values().stream()
                 .sorted(Comparator.comparing(Product::getPrice))
                 .map(Product::toString)
@@ -161,7 +164,7 @@ public class CommandReceiver {
         else return "Коллекция пуста";
     }
 
-    public String printDescending() {
+    public synchronized String printDescending() {
         if (!collection.isEmpty()) return collection.values().stream()
                 .sorted(Comparator
                         .comparing(Product::getPrice)

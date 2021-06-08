@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class HelpCommand implements Command, Serializable {
     private final String key = "help";
     private final String helpText = "вывести справку по доступным командам";
+    private static final long serialVersionUID = 6529685098267757690L;
 
     @Override
     public String execute(CommandReceiver commandReceiver) {

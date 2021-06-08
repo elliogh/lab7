@@ -1,10 +1,8 @@
 package commands;
 
-import collection.Product;
 import utill.CommandReceiver;
 
 import java.io.Serializable;
-import java.util.TreeMap;
 
 /**
  * Класс команды clear
@@ -12,6 +10,7 @@ import java.util.TreeMap;
 public class ClearCommand implements Command, Serializable {
     private final String key = "clear";
     private final String helpText = "очистить коллекцию";
+    private static final long serialVersionUID = 6529685098267757690L;
 
     @Override
     public String execute(CommandReceiver commandReceiver) {
@@ -27,4 +26,5 @@ public class ClearCommand implements Command, Serializable {
     public String getHelpText() {
         return helpText;
     }
+
 }

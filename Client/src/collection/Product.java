@@ -16,8 +16,10 @@ public class Product implements Serializable {
     private Float manufactureCost; //Поле может быть null
     private UnitOfMeasure unitOfMeasure; //Поле может быть null
     private Person owner; //Поле может быть null
+    private String creator;
+    private static final long serialVersionUID = 6529685098267757690L;
 
-    public Product(Integer id, String name, Coordinates coordinates, Date creationDate, int price, String partNumber, Float manufactureCost, UnitOfMeasure unitOfMeasure, Person owner) {
+    public Product(Integer id, String name, Coordinates coordinates, Date creationDate, int price, String partNumber, Float manufactureCost, UnitOfMeasure unitOfMeasure, Person owner, String creator) {
         this.id = id;
         this.name = name;
         this.coordinates = coordinates;
@@ -27,6 +29,7 @@ public class Product implements Serializable {
         this.manufactureCost = manufactureCost;
         this.unitOfMeasure = unitOfMeasure;
         this.owner = owner;
+        this.creator = creator ;
     }
 
     public Integer getId() {

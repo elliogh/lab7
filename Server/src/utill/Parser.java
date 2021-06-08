@@ -21,7 +21,8 @@ public class Parser {
                         rs.getString("partnumber"),
                         rs.getFloat("manufacturecost"),
                         UnitOfMeasure.valueOf(rs.getString("unitofmeasure")),
-                        new Person(rs.getString("ownername"), rs.getDate("birthday"), rs.getFloat("height"), rs.getLong("weight"), rs.getString("passportid")));
+                        new Person(rs.getString("ownername"), rs.getDate("birthday"), rs.getFloat("height"), rs.getLong("weight"), rs.getString("passportid")),
+                        rs.getString("creator"));
                 collection.put(product.getId(), product);
             } catch (SQLException e) {
                 System.out.println("exception");

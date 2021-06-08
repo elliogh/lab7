@@ -1,11 +1,9 @@
 package commands;
 
 import collection.Person;
-import collection.Product;
 import utill.CommandReceiver;
 
 import java.io.Serializable;
-import java.util.TreeMap;
 
 /**
  * Класс команды remove_all_by_owner
@@ -34,4 +32,6 @@ public class RemoveAllByOwnerCommand implements Command, Serializable {
     public String getHelpText() {
         return helpText;
     }
+
+
 }

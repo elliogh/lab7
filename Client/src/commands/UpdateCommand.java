@@ -14,10 +14,12 @@ public class UpdateCommand implements Command, Serializable {
     private final int id;
     private final Product product;
     private static final long serialVersionUID = 6529685098267757690L;
+    private String login;
 
-    public UpdateCommand(int id, Product product) {
+    public UpdateCommand(int id, Product product, String login) {
         this.id = id;
         this.product = product;
+        this.login = login;
     }
 
     @Override

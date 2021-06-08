@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class InfoCommand implements Command, Serializable {
     private final String key = "info";
     private final String helpText = "вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)";
+    private static final long serialVersionUID = 6529685098267757690L;
 
     @Override
     public String execute(CommandReceiver commandReceiver) {

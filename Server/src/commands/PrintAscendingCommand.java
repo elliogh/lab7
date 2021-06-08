@@ -1,10 +1,8 @@
 package commands;
 
-import collection.Product;
 import utill.CommandReceiver;
 
 import java.io.Serializable;
-import java.util.TreeMap;
 
 /**
  * Класс команды print_ascending
@@ -12,6 +10,7 @@ import java.util.TreeMap;
 public class PrintAscendingCommand implements Command, Serializable {
     private final String key = "print_ascending";
     private final String helpText = "вывести элементы коллекции в порядке возрастания";
+    private static final long serialVersionUID = 6529685098267757690L;
 
     @Override
     public String execute(CommandReceiver commandReceiver) {
@@ -27,4 +26,6 @@ public class PrintAscendingCommand implements Command, Serializable {
     public String getHelpText() {
         return helpText;
     }
+
+
 }

@@ -4,7 +4,6 @@ import collection.Coordinates;
 import collection.Person;
 import collection.Product;
 import collection.UnitOfMeasure;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import commands.*;
 import java.io.*;
 import java.net.*;
@@ -27,7 +26,7 @@ public class CommandReader {
      * Метод для парсинга и запуска команды
      * @param input аргументы команды
      */
-    public void parseCommand(String[] input, DatagramSocket socket, SocketAddress address, Scanner scanner) {
+    public void parseCommand(String[] input, DatagramSocket socket, SocketAddress address, Scanner scanner, String login) {
         String commandKey = input[0];
         String[] ar = Arrays.copyOfRange(input, 1, input.length);
         switch (commandKey) {
@@ -46,8 +45,8 @@ public class CommandReader {
             case "insert" :
                 try {
                     //Проверяем на execute_script
-                    if (isExecuteScript) send(new InsertCommand(Integer.parseInt(argument), insertProduct(argument.split(" "))), socket, address);
-                    else send(new InsertCommand(Integer.parseInt(ar[0]), insertProduct(ar)), socket, address);
+                    if (isExecuteScript) send(new InsertCommand(Integer.parseInt(argument), insertProduct(argument.split(" "), login), login), socket, address);
+                    else send(new InsertCommand(Integer.parseInt(ar[0]), insertProduct(ar, login), login), socket, address);
                     receive(socket);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println("Недостаточно аргументов");
@@ -58,8 +57,8 @@ public class CommandReader {
             case "update" :
                 try {
                     //Проверяем на execute_script
-                    if (isExecuteScript) send(new UpdateCommand(Integer.parseInt(argument), insertProduct(argument.split(" "))), socket, address);
-                    else send(new UpdateCommand(Integer.parseInt(ar[0]), insertProduct(ar)), socket, address);
+                    if (isExecuteScript) send(new UpdateCommand(Integer.parseInt(argument), insertProduct(argument.split(" "), login), login), socket, address);
+                    else send(new UpdateCommand(Integer.parseInt(ar[0]), insertProduct(ar, login), login), socket, address);
                     receive(socket);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println("Недостаточно аргументов");
@@ -69,7 +68,7 @@ public class CommandReader {
                 break;
             case "remove_key" :
                 try {
-                    send(new RemoveKeyCommand(Integer.parseInt(ar[0])), socket, address);
+                    send(new RemoveKeyCommand(Integer.parseInt(ar[0]), login), socket, address);
                     receive(socket);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println("Недостаточно аргументов");
@@ -115,7 +114,7 @@ public class CommandReader {
                                     i+=12;
                                 }
                             }
-                            parseCommand(in, socket, address, scanner); //Отправляем команду
+                            parseCommand(in, socket, address, scanner, login); //Отправляем команду
                         }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -132,8 +131,8 @@ public class CommandReader {
                 try {
                     String[] a = new String[1];
                     a[0] = "45";
-                    if (isExecuteScript) send(new RemoveLowerCommand(insertProduct(a)), socket, address);
-                    else send(new RemoveLowerCommand(insertProduct(a)), socket, address);
+                    if (isExecuteScript) send(new RemoveLowerCommand(insertProduct(a, login)), socket, address);
+                    else send(new RemoveLowerCommand(insertProduct(a, login)), socket, address);
                     receive(socket);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println("Недостаточно аргументов");
@@ -143,7 +142,7 @@ public class CommandReader {
                 break;
             case "replace_if_greater" :
                 try {
-                    send(new ReplaceIfGreaterCommand(Integer.parseInt(ar[0]), insertProduct(ar)), socket, address);
+                    send(new ReplaceIfGreaterCommand(Integer.parseInt(ar[0]), insertProduct(ar, login)), socket, address);
                     receive(socket);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println("Недостаточно аргументов");
@@ -183,10 +182,10 @@ public class CommandReader {
      * @param ar аргумент команды
      * @return product
      */
-    public Product insertProduct(String[] ar) {
+    public Product insertProduct(String[] ar, String login) {
         Scanner scanner = new Scanner(System.in);
         String line = "";
-        Product product = new Product(Integer.parseInt(ar[0]), null, null, null, 0,  null, null, null, null);
+        Product product = new Product(Integer.parseInt(ar[0]), null, null, null, 0,  null, null, null, null, login);
 
         //Ввод product если execute_script
         if (isExecuteScript) {

@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class PrintDescendingCommand implements Command, Serializable {
     private final String key = "print_descending";
     private final String helpText = "вывести элементы коллекции в порядке убывания";
+    private static final long serialVersionUID = 6529685098267757690L;
 
     @Override
     public String execute(CommandReceiver commandReceiver) {

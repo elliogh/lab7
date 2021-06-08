@@ -1,10 +1,8 @@
 package commands;
 
-import collection.Product;
 import utill.CommandReceiver;
 
 import java.io.Serializable;
-import java.util.TreeMap;
 
 /**
  * Класс команды remove_lower_key
@@ -33,4 +31,6 @@ public class RemoveLowerKeyCommand implements Command, Serializable{
     public String getHelpText() {
         return helpText;
     }
+
+
 }

@@ -1,9 +1,6 @@
 package commands;
 
-import collection.Product;
 import utill.CommandReceiver;
-
-import java.util.TreeMap;
 
 /**
  * Абстрактный класс команды
@@ -15,4 +12,5 @@ public interface Command {
     String getKey();
 
     String getHelpText();
+
 }

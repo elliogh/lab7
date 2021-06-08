@@ -94,8 +94,8 @@ public class Client {
                         }
 
                         commandReader.registerServerUser(serverUser, clientSocket, socketAddress);
+                        commandReader.receive(clientSocket);
 
-                        System.out.println("Пользователь " + serverUser.getLogin() + " успешно зарегистрирован!");
                         continue;
                     } else if (answer.equals("n")){
                         continue;
@@ -113,16 +113,12 @@ public class Client {
                     if (input.isEmpty()) {
                         continue;
                     }
-                    commandReader.parseCommand(inputCommand.split(" "), clientSocket, socketAddress, consoleScanner);
+                    commandReader.parseCommand(inputCommand.split(" "), clientSocket, socketAddress, consoleScanner, serverUser.getLogin());
                 } catch (NoSuchElementException e) {
                     System.out.println("Заверешение программы...");
                     System.exit(1);
                 }
             }
         } catch (IOException e) {}
-    }
-
-    public void init(){
-
     }
 }
