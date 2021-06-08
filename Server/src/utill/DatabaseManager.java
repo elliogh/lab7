@@ -11,8 +11,8 @@ import java.util.*;
 
 public class DatabaseManager {
     private final String url = "jdbc:postgresql://pg/studs";
-    private final String user = "s311709";
-    private final String password = "ogc316";
+    private final String user = "";
+    private final String password = "";
     private Connection connection;
 
     public String getUrl() {
